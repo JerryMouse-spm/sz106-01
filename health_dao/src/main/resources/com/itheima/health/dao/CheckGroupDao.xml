@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.health.dao.CheckGroupDao">
+    <!--
+    keyProperty属性指定实体类中哪个属性才主键
+    useGeneratedKeys属性设置为true就是把自增的key赋值到主键-->
+    <insert id="add" parameterType="checkgroup" keyProperty="id" useGeneratedKeys="true">
+        insert into t_checkgroup (code,name,helpCode,sex,remark,attention)
+        values (#{code},#{name},#{helpCode},#{sex},#{remark},#{attention})
+    </insert>
+
+    <insert id="addCheckGroupCheckItem" parameterType="int">
+        insert into t_checkgroup_checkitem (checkgroup_id,checkitem_id)
+        values (#{checkgroupId},#{checkitemId})
+    </insert>
+
+    <select id="findPageByCondition" parameterType="string" resultType="checkgroup">
+        select * from t_checkgroup
+        <where>
+            <if test="value != null and value.length > 0">
+                code like #{queryString} or name like #{queryString} or helpCode like #{queryString}
+            </if>
+        </where>
+    </select>
+
+    <select id="findById" parameterType="int" resultType="checkgroup">
+        select * from t_checkgroup where id=#{id}
+    </select>
+
+    <select id="findCheckItemIdByCheckGroupId" parameterType="int" resultType="int">
+        select checkitem_id from t_checkgroup_checkitem where checkgroup_id=#{id}
+    </select>
+
+    <delete id="deleteCheckItemCheckGroupByCheckGroudId" parameterType="int">
+        delete from t_checkgroup_checkitem where checkgroup_id=#{checkgroupId}
+    </delete>
+
+    <update id="update" parameterType="checkgroup">
+        update t_checkgroup
+        set code=#{code},name=#{name},helpCode=#{helpCode},Sex=#{sex},remark=#{remark},attention=#{attention}
+        where id=#{id}
+    </update>
+
+    <select id="findAll" resultType="CheckGroup">
+        select * from t_checkgroup
+    </select>
+
+    <delete id="deleteById" parameterType="int">
+        delete from t_checkgroup where id=#{id}
+    </delete>
+
+    <select id="findSetmealCheckGroup" parameterType="int" resultType="int">
+        select count(0) from t_setmeal_checkgroup where checkgroup_id=#{id}
+    </select>
+</mapper>
