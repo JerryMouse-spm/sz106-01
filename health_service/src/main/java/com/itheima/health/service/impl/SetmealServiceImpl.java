@@ -3,10 +3,14 @@ package com.itheima.health.service.impl;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.itheima.health.dao.CheckGroupDao;
+import com.itheima.health.dao.CheckItemDao;
 import com.itheima.health.dao.SetmealDao;
 import com.itheima.health.entity.PageResult;
 import com.itheima.health.entity.QueryPageBean;
 import com.itheima.health.exception.MyException;
+import com.itheima.health.pojo.CheckGroup;
+import com.itheima.health.pojo.CheckItem;
 import com.itheima.health.pojo.Setmeal;
 import com.itheima.health.service.SetmealService;
 import org.apache.zookeeper.data.Id;
@@ -22,6 +26,10 @@ public class SetmealServiceImpl implements SetmealService {
      */
     @Autowired
     private SetmealDao setmealDao;
+    @Autowired
+    private CheckGroupDao checkGroupDao;
+    @Autowired
+    private CheckItemDao checkItemDao;
     /**
      * 添加套餐和其相关信息
      * Transactional注解控制事务
@@ -166,4 +174,53 @@ public class SetmealServiceImpl implements SetmealService {
     public List<String> findImgs() {
         return setmealDao.findImgs();
     }
+
+    @Override
+    public List<Setmeal> getSetmeal() {
+        /**
+         * 调用Dao获取所有套餐信息
+         */
+        return setmealDao.getSetmeal();
+    }
+
+    /**
+     * 根据套餐ID查询套餐相关信息
+     * @param id
+     * @return
+     */
+    @Override
+    public Setmeal findDetailById(Integer id) {
+        return setmealDao.findDetailById(id);
+    }
+
+    @Override
+    public Setmeal findDetailById2(Integer id) {
+        return setmealDao.findDetailById2(id);
+    }
+
+    @Override
+    public Setmeal findDetailById3(Integer id) {
+        // 调用业务层根据ID查询到Setmeal对象
+        Setmeal setmeal = setmealDao.findById(id);
+        // 判断查询出来的setmeal是不是空
+        if (setmeal != null){
+            // 然后根据Setmeal对象ID查询出所有的检查组CheckGroup
+            List<CheckGroup> checkGroupList = checkGroupDao.findCheckGroupListBySetmealId(id);
+            // 判断查询出来的checkGroupList不为null且长度大于0
+            if (checkGroupList != null && checkGroupList.size() > 0){
+                // 遍历出每个检查组，然后根据检查组ID去查询对应的检查项
+                // 并把查询到的检查项赋值到CheckGroup的属性
+                for (CheckGroup checkGroup : checkGroupList) {
+                    List<CheckItem> checkItemList = checkItemDao.findCHeckItemListByCheckGroupId(checkGroup.getId());
+                    checkGroup.setCheckItems(checkItemList);
+                }
+            }
+            //把“属性加满”的检查组赋值到setmeal的属性并返回setmeal给Controller
+            setmeal.setCheckGroups(checkGroupList);
+        }
+
+        return setmeal;
+    }
+
+
 }

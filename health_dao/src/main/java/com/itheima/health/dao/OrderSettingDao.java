@@ -3,6 +3,8 @@ package com.itheima.health.dao;
 import com.itheima.health.pojo.OrderSetting;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 public interface OrderSettingDao {
     /**
@@ -23,4 +25,11 @@ public interface OrderSettingDao {
      * @param os
      */
     void add(OrderSetting os);
+
+    /**
+     * 根据月份查询当月预约信息
+     * @param Month
+     * @return
+     */
+    List<Map<String,Object>> getOrderSettingByMonth(String Month);
 }

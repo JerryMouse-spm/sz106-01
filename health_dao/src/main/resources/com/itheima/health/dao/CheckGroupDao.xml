@@ -54,4 +54,22 @@
     <select id="findSetmealCheckGroup" parameterType="int" resultType="int">
         select count(0) from t_setmeal_checkgroup where checkgroup_id=#{id}
     </select>
+
+    <select id="findCheckGroupBySetmealId" parameterType="int" resultMap="checkGroupDatailResultMap">
+        select * from t_checkgroup where id in
+        (select checkgroup_id from t_setmeal_checkgroup where setmeal_id=#{id})
+    </select>
+
+    <resultMap id="checkGroupDatailResultMap" type="checkGroup">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="remark" column="remark"/>
+        <collection property="checkItems" ofType="checkItem" column="id"
+                    select="com.itheima.health.dao.CheckItemDao.findCheckItemByCheckGroupId"/>
+    </resultMap>
+
+    <select id="findCheckGroupListBySetmealId" parameterType="int" resultType="CheckGroup">
+        select * from t_checkgroup where id in
+        (select checkgroup_id from t_setmeal_checkgroup where setmeal_id=#{id})
+    </select>
 </mapper>

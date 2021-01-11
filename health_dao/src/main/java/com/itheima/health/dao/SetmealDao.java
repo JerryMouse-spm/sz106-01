@@ -70,4 +70,19 @@ public interface SetmealDao {
      * @return
      */
     List<String> findImgs();
+
+    /**
+     * 查询所有套餐列表
+     * @return
+     */
+    List<Setmeal> getSetmeal();
+
+    /**
+     * 根据ID查询套餐相关信息
+     * @param id
+     * @return
+     */
+    Setmeal findDetailById(Integer id);
+
+    Setmeal findDetailById2(Integer id);
 }

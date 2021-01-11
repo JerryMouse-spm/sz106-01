@@ -51,4 +51,50 @@
     <select id="findImgs" resultType="String">
         select img from t_setmeal
     </select>
+
+    <select id="getSetmeal" resultType="setmeal">
+        select * from t_setmeal
+    </select>
+
+    <select id="findDetailById" parameterType="int" resultMap="setmealDateilResultMap">
+        select
+        s.id,s.name,s.sex,s.age,s.price,s.remark,
+        g.id checkgroup_id,g.name checkgroup_name,g.remark checkgroup_remark,
+        i.id checkitem_id,i.name checkitem_name
+        from
+        t_setmeal s left join t_setmeal_checkgroup sc on sc.setmeal_id=s.id
+        left join t_checkgroup g on g.id=sc.checkgroup_id
+        left join t_checkgroup_checkitem cc on cc.checkgroup_id=g.id
+        left join t_checkitem i on i.id=cc.checkitem_id
+        where
+        s.id=#{id}
+    </select>
+    
+    <resultMap id="setmealDateilResultMap" type="Setmeal">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="sex" column="sex"/>
+        <result property="age" column="age"/>
+        <result property="price" column="price"/>
+        <result property="remark" column="remark"/>
+        <collection property="checkGroups" ofType="checkGroup">
+            <id property="id" column="checkgroup_id"/>
+            <result property="name" column="checkgroup_name"/>
+            <result property="remark" column="checkgroup_remark"/>
+            <collection property="checkItems" ofType="checkItem">
+                <id property="id" column="checkitem_id"/>
+                <result property="name" column="checkitem_name"/>
+            </collection>
+        </collection>
+    </resultMap>
+
+    <select id="findDetailById2" parameterType="int" resultMap="setmealDateilResultMap2">
+        select * from t_setmeal where id=#{id}
+    </select>
+
+    <resultMap id="setmealDateilResultMap2" type="Setmeal" autoMapping="true">
+        <id property="id" column="id"/>
+        <collection property="checkGroups" ofType="checkGroup" column="id"
+                    select="com.itheima.health.dao.CheckGroupDao.findCheckGroupBySetmealId"/>
+    </resultMap>
 </mapper>

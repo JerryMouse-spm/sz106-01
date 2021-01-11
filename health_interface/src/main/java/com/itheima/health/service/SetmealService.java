@@ -4,6 +4,7 @@ import com.itheima.health.entity.PageResult;
 import com.itheima.health.entity.QueryPageBean;
 import com.itheima.health.exception.MyException;
 import com.itheima.health.pojo.Setmeal;
+import com.sun.xml.internal.ws.api.config.management.policy.ManagementAssertion;
 
 import java.util.List;
 
@@ -54,4 +55,21 @@ public interface SetmealService {
      * @return
      */
     List<String> findImgs();
+
+    /**
+     * 查询所有套餐列表
+     * @return
+     */
+    List<Setmeal> getSetmeal();
+
+    /**
+     * 根据套餐ID查询套餐相关信息
+     * @param id
+     * @return
+     */
+    Setmeal findDetailById(Integer id);
+
+    Setmeal findDetailById2(Integer id);
+
+    Setmeal findDetailById3(Integer id);
 }

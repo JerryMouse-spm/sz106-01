@@ -72,4 +72,16 @@ public interface CheckGroupDao {
      * @return
      */
     Integer findSetmealCheckGroup(Integer id);
+
+    /**
+     * 根据套餐ID查询相应的所有检查组
+     * @param id
+     * @return
+     */
+    List<CheckGroup> findCheckGroupBySetmealId(Integer id);
+
+    /**
+     * 根据套餐ID查询相应的所有检查组2
+     */
+    List<CheckGroup> findCheckGroupListBySetmealId(Integer id);
 }

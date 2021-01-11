@@ -145,7 +145,7 @@ public class SetmealController {
         return new Result(true, MessageConstant.EDIT_SETMEAL_SUCCESS);
     }
 
-    @PostMapping("deleteById")
+    @PostMapping("/deleteById")
     public Result deleteById(Integer id){
         /**
          * 调用业务层方法删除该套餐和该套餐的相关信息
@@ -156,4 +156,5 @@ public class SetmealController {
          */
         return new Result(true, MessageConstant.DELETE_SETMEAL_SUCCESS);
     }
+
 }

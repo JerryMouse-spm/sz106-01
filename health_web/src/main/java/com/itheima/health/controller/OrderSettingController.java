@@ -8,15 +8,15 @@ import com.itheima.health.service.OrderSettingService;
 import com.itheima.health.utils.POIUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.sql.ResultSet;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -60,5 +60,25 @@ public class OrderSettingController {
             log.error("导入预约数据失败",e);
             return new Result(false, MessageConstant.IMPORT_ORDERSETTING_FAIL);
         }
+    }
+
+    @GetMapping("/getOrderSettingByMonth")
+    public Result getOrderSettingByMonth(String month){
+
+        //调用业务层处理请求
+        List<Map<String, Object>> orderSettingByMonth = orderSettingService.getOrderSettingByMonth(month);
+
+        //通知客户端查询结果，并返回数据
+        return new Result(true, MessageConstant.GET_ORDERSETTING_SUCCESS,orderSettingByMonth);
+    }
+
+    @PostMapping("/editNumberByDate")
+    public Result editNumberByDate(@RequestBody OrderSetting orderSetting){
+
+        //调用业务层处理请求
+        orderSettingService.editNumberByDate(orderSetting);
+
+        //通知客户端查询结果，并返回数据
+        return new Result(true, MessageConstant.ORDERSETTING_SUCCESS);
     }
 }
