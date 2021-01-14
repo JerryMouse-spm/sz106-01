@@ -26,4 +26,9 @@
         where
         orderDate like #{month}
     </select>
+
+    <!--更新已预约人数-->
+    <update id="editReservationsByOrderDate" parameterType="OrderSetting">
+        update t_ordersetting set reservations = reservations+1 where orderDate = #{orderDate} and reservations &lt; number
+    </update>
 </mapper>

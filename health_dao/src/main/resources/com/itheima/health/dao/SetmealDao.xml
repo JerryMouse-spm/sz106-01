@@ -58,7 +58,7 @@
 
     <select id="findDetailById" parameterType="int" resultMap="setmealDateilResultMap">
         select
-        s.id,s.name,s.sex,s.age,s.price,s.remark,
+        s.id,s.name,s.sex,s.age,s.price,s.remark,s.img,
         g.id checkgroup_id,g.name checkgroup_name,g.remark checkgroup_remark,
         i.id checkitem_id,i.name checkitem_name
         from
@@ -77,6 +77,8 @@
         <result property="age" column="age"/>
         <result property="price" column="price"/>
         <result property="remark" column="remark"/>
+        <result property="img" column="img"/>
+
         <collection property="checkGroups" ofType="checkGroup">
             <id property="id" column="checkgroup_id"/>
             <result property="name" column="checkgroup_name"/>
