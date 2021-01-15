@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+    <!--所有的url必须以/开头，否则启动报错-->
+    <!--
+    静态资源过滤:
+        1.pattern属性指定页面地址
+        2.security属性设置为none表示不过滤该页面，放行，或者说式匿名访问
+        3./**是表示它这个目录底下的所有子目录
+    -->
+    <security:http pattern="/login.html" security="none"/>
+    <security:http pattern="/css/**" security="none"/>
+    <security:http pattern="/img/**" security="none"/>
+    <security:http pattern="/js/**" security="none"/>
+    <security:http pattern="/plugins/**" security="none"/>
+    <!--
+    配置拦截规则：
+        1.auto-config属性，加载这配置文件时，就是用来做登录处理 和 自动装载内置的过滤器，总共12种，这些都是用户过滤登录页面等等...
+        2.use-expressions属性，如果为true时就是标定访问资源是否使用表达式 hasAny... hasAut... hasRole
+                           如果为false就是使用角色来做访问控制
+                           这个跟access的值有关
+                           如果这个属性的值为false，那么access的值就必须是以ROLE开头，否则启动加载这个配置文件的时候就会报错
+        3.access属性：配置了isAuthenticated()表示这个项目的所有路径都要进行登录后才能访问（静态资源过滤除外）
+-->
+    <security:http auto-config="true" use-expressions="true">
+        <!--拦截的url, pattern属性配置/**那就是拦截所有-->
+        <security:intercept-url pattern="/**" access="isAuthenticated()"/>
+        <!--
+        指定登录页面：
+            1.login-page属性：
+                用于指定登录页面
+            2.username-parameters属性：
+                用于指定提交过来的用户名的参数名
+            3.password-parameter属性：
+                用于指定提交过来的密码的参数名
+            4.login-processing-url属性：
+                用于指定登录页面的请求路径(不会拦截，其他的都拦截)
+            5.authentication-failure-url属性：
+                用于指定登录失败后重定向到失败页面的路径（前提是这个路径必须加入到静态资源过滤，否则访问会被拦截）
+            6.default-target-url属性：
+                用于指定登录成功后到上一个页面
+                你从哪个页面过来的，登录成功后就回到哪个页面去
+                (前提是always-use-default-target属性为true)
+            7.always-use-default-target属性：
+                如果为false：登录成功后，从哪个页面过来登录的，就回到哪个页面去
+                如果为true：登录成功后，不管你是从哪个页面过来的，都会回到default-target-url属性配置的页面去
+        -->
+        <security:form-login login-page="/login.html"
+                             username-parameter="username"
+                             password-parameter="password"
+                             login-processing-url="/login.do"
+                             authentication-failure-url="/login.html"
+                             default-target-url="/pages/main.html"
+                             always-use-default-target="true"
+        />
+        <security:headers>
+            <!--
+            文档嵌套访问策略：
+            SAMEORIGIN: 同源（同一个网站）
+            DENY：不允许文档嵌套
+            ALLOW-FROM：指定url可访问
+            -->
+            <security:frame-options policy="SAMEORIGIN"/>
+        </security:headers>
+        <!--关闭跨域访问限制-->
+        <security:csrf disabled="true"/>
+        <!--
+        退出登录:
+            1.logout-url属性表示退出登录的请求路径
+            2.invalidate-session属性为true表示清除登录状态
+            3.logout-success-url属性表示退出登录后会去到哪个页面
+        -->
+        <security:logout logout-url="/logout" invalidate-session="true" logout-success-url="/login.html"/>
+    </security:http>
+
+    <!--开启权限验证的注解支持-->
+    <security:global-method-security pre-post-annotations="enabled"/>
+
+    <!--
+    认证管理器：
+        是用于提供用户认证信息的
+    -->
+    <security:authentication-manager>
+        <!--
+        authentication-provider相当于一个供应商：
+            用来提供认证用户的信息的，就是登录用户的信息
+            这里面包含了 用户名、密码、权限集合
+        -->
+        <!--
+        user-service-ref属性：
+            1.ref一般都是引入bean对象
+        -->
+        <security:authentication-provider user-service-ref="springSecurityUserService">
+            <!--
+            配置密码加密：
+                不加密的话会密码错误
+            -->
+            <security:password-encoder ref="encoder"/>
+        </security:authentication-provider>
+    </security:authentication-manager>
+
+    <bean id="springSecurityUserService" class="com.itheima.health.security.SpringSecurityUserService"/>
+
+    <!--密码加密-->
+    <bean id="encoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+
+</beans>

@@ -4,6 +4,7 @@ import com.itheima.health.entity.Result;
 import com.itheima.health.exception.MyException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -30,6 +31,10 @@ public class MyExceptionAdvice {
         return new Result(false,e.getMessage());
     }
 
+    @ExceptionHandler(AccessDeniedException.class)
+    public Result handlerMyException(AccessDeniedException e){
+        return new Result(false,"你以为你是谁？你有什么资格这么做！");
+    }
     /**
      * 处理未知异常
      * @param e

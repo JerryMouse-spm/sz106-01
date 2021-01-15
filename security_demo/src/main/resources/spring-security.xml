@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+<!--
+配置拦截规则：
+    1.auto-config属性，加载这配置文件时，就是用来做登录处理 和 自动装载内置的过滤器，总共12种，这些都是用户过滤登录页面等等...
+    2.use-expressions属性，如果为true时就是标定访问资源是否使用表达式 hasAny... hasAut... hasRole
+                           如果为false就是使用角色来做访问控制
+                           这个跟access的值有关
+                           如果这个属性的值为false，那么access的值就必须是以ROLE开头，否则启动加载这个配置文件的时候就会报错
+-->
+    <security:http auto-config="true" use-expressions="false">
+        <!--拦截的url, pattern属性配置/**那就是拦截所有-->
+        <security:intercept-url pattern="/**" access="ROLE_ADMON"/>
+    </security:http>
+
+    <!--
+    认证管理器：
+        是用于提供用户认证信息的
+    -->
+    <security:authentication-manager>
+        <!--
+        authentication-provider相当于一个供应商：
+        用来提供认证用户的信息的，就是登录用户的信息
+        这里面包含了 用户名、密码、权限集合
+        -->
+        <security:authentication-provider>
+            <!--自定义一个用户信息-->
+            <security:user-service>
+                <!--
+                写死在内存中这样一个用户信息：
+                1.name属性代表 着用户名
+                2.authorities属性代表着这个用户所拥有的 权限集合
+                3.password属性代表着 用户密码
+                4.{noop}表示使用明文，他是9种密码加密器里面的其中一种
+                -->
+                <security:user name="admin" authorities="ROLE_ADMON" password="{noop}admin123"/>
+            </security:user-service>
+        </security:authentication-provider>
+    </security:authentication-manager>
+</beans>
